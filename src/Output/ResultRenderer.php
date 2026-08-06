@@ -22,6 +22,10 @@ final class ResultRenderer
             $output->write(Yaml::dump($result, 4, 2));
             return;
         }
+        if (is_array($result) && !array_is_list($result)) {
+            $output->write(Yaml::dump($result, 4, 2));
+            return;
+        }
         $rows = is_array($result) && array_is_list($result) ? $result : [$result];
         if ($rows === [[]]) {
             $output->writeln('No results.');

@@ -6,11 +6,11 @@ Standalone Symfony Console application with focused commands, a reusable Symfony
 
 ## MVP scope
 
-Version, authentication login/status/logout, whoami, secret redaction, `/me/` validation, endpoint inventory, tests, static analysis, linting, and PHAR packaging.
+Version, authentication login/status/logout, whoami, read-only region/instance/instance-type/environment/deployment commands, secret redaction, endpoint inventory, tests, static analysis, linting, and PHAR packaging.
 
 ## Deferred scope
 
-Resource commands whose exact endpoint pages and response examples need further inventory; all mutating/destructive operations and archive upload commands.
+Instance creation, instance termination, environment updates, deployment creation/cancellation, worker control, and archive upload commands.
 
 ## Security decisions
 
@@ -18,4 +18,4 @@ Bearer keys are never logged or printed in full. Unix config files use mode 0600
 
 ## Risks and next steps
 
-The live docs index links additional endpoint pages but currently exposes incomplete path/response details for several resources. `regions list` is now implemented from its fully documented child page; inventory the remaining child pages next.
+The live docs index links additional endpoint pages but currently exposes incomplete path/response details for several resources. The current read-only batch is implemented from documented child pages; inventory worker and remaining mutating child pages next.

@@ -20,25 +20,26 @@ final class RegionsCommand extends AbstractCommand
     protected function configure(): void
     {
         parent::configure();
-        $this->addArgument('action', InputArgument::REQUIRED, 'list');
+        $this->addArgument('action', InputArgument::REQUIRED, 'list or get')->addArgument('region-id', InputArgument::OPTIONAL);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if ($input->getArgument('action') !== 'list') {
-            return $this->fail($output, 'Unknown regions action. Use: regions list', 2);
-        }
-
         try {
-            $regions = (new RegionApi($this->client($input)))->list();
-            $this->renderer->render($output, $regions, $this->outputFormat($input), [
-                'ID' => 'id',
-                'Country' => 'iso_country_code',
-                'Name' => 'name',
-            ]);
+            $api = new RegionApi($this->client($input));
+            if ($input->getArgument('action') === 'list') {
+                $result = $api->list();
+                $columns = ['ID' => 'id', 'Country' => 'iso_country_code', 'Name' => 'name'];
+            } elseif ($input->getArgument('action') === 'get' && is_string($input->getArgument('region-id')) && $input->getArgument('region-id') !== '') {
+                $result = $api->get((string) $input->getArgument('region-id'));
+                $columns = [];
+            } else {
+                return $this->fail($output, 'Usage: regions list or regions get <region-id>', 2);
+            }
+            $this->renderer->render($output, $result, $this->outputFormat($input), $columns);
             return 0;
         } catch (\Throwable $exception) {
-            return $this->fail($output, $exception->getMessage(), 5);
+            return $this->fail($output, $exception->getMessage(), $this->exceptionCode($exception));
         }
     }
 }

@@ -15,10 +15,10 @@ final class WhoamiCommand extends AbstractCommand
         try {
             $this->renderer->render($output, (new \AmezmoCli\Api\AccountApi($this->client($input)))->currentUser(), $this->outputFormat($input));
             return 0;
-        } catch (AuthenticationException $e) {
-            return $this->fail($output, $e->getMessage(), 3);
-        } catch (\Throwable $e) {
-            return $this->fail($output, $e->getMessage(), 5);
+        } catch (AuthenticationException $exception) {
+            return $this->fail($output, $exception->getMessage(), $this->exceptionCode($exception));
+        } catch (\Throwable $exception) {
+            return $this->fail($output, $exception->getMessage(), $this->exceptionCode($exception));
         }
     }
 }

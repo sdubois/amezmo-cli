@@ -45,6 +45,9 @@ final class AmezmoClient
         $data = $body === '' ? [] : json_decode($body, true);
         if ($status >= 400) {
             $message = is_array($data) && isset($data['message']) && is_string($data['message']) ? $data['message'] : 'Amezmo API returned HTTP ' . $status . '.';
+            if ($status === 404) {
+                $message = 'Resource not found (HTTP 404). Check the resource type and identifier.';
+            }
             if ($status === 401) {
                 throw new AuthenticationException($message, $status, is_array($data) ? $data : []);
             }

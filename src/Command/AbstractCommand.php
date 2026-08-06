@@ -7,7 +7,10 @@ namespace AmezmoCli\Command;
 use AmezmoCli\Api\AmezmoClient;
 use AmezmoCli\Auth\CredentialStoreInterface;
 use AmezmoCli\Config\ConfigLoader;
+use AmezmoCli\Exception\ApiException;
+use AmezmoCli\Exception\AuthenticationException;
 use AmezmoCli\Output\ResultRenderer;
+use AmezmoCli\Support\ExitCode;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,6 +43,22 @@ abstract class AbstractCommand extends Command
     protected function outputFormat(InputInterface $input): string
     {
         return $this->config->load($this->options($input))->output;
+    }
+
+    protected function exceptionCode(\Throwable $exception): int
+    {
+        if ($exception instanceof AuthenticationException) {
+            return ExitCode::AUTH;
+        }
+        if ($exception instanceof ApiException) {
+            return match ($exception->statusCode) {
+                401, 403 => ExitCode::AUTH,
+                404 => ExitCode::NOT_FOUND,
+                422 => ExitCode::VALIDATION,
+                default => ExitCode::API,
+            };
+        }
+        return ExitCode::API;
     }
     protected function fail(OutputInterface $output, string $message, int $code = 1): int
     {

@@ -14,4 +14,10 @@ final class RegionApi
         $regions = $this->client->request('GET', '/regions');
         return array_values($regions);
     }
+
+    /** @return array<string, mixed> */
+    public function get(string $id): array
+    {
+        return $this->client->request('GET', '/regions/' . rawurlencode($id));
+    }
 }
