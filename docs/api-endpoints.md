@@ -16,7 +16,8 @@ Source: [official Amezmo API documentation](https://www.amezmo.com/docs/api), in
 | Deployments | Get | GET | `/instances/{instance_id}/deployments/{deployment_id}` | URI IDs | 200 `{id,status}` | yes | read-only | [page](https://www.amezmo.com/docs/api/deployments/get) |
 | Deployments | Create | POST | `/instances/{instance_id}/deployments` | multipart: `environment`, `archive`, optional repo metadata | 201 `{id,status}` | yes | mutating | [page](https://www.amezmo.com/docs/api/deployments/post); archive max 512MB |
 | Deployments | Cancel | POST | documented from Deployments index | path/body not exposed in captured content | undocumented here | yes | destructive | [index](https://www.amezmo.com/docs/api/deployments) |
-| Regions | List/Get | GET | documented from Regions index | paths/shape not exposed in captured content | undocumented here | yes | read-only | [index](https://www.amezmo.com/docs/api/regions) |
+| Regions | List | GET | `/regions` | none | 200 array of `{id, iso_country_code, name}` | yes | read-only | [page](https://www.amezmo.com/docs/api/regions/list-regions) |
+| Regions | Get | GET | documented from Regions index | path/shape not exposed in captured content | undocumented here | yes | read-only | [index](https://www.amezmo.com/docs/api/regions) |
 | Workers | Get/Start/Stop/Restart | GET/POST | documented from Workers index | paths/shape not exposed in captured content | undocumented here | yes | read-only or mutating | [index](https://www.amezmo.com/docs/api/workers) |
 
 Open questions are intentionally retained rather than filled with guesses. The initial CLI slice only uses the fully documented `/me/` operation.

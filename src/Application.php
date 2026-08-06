@@ -11,6 +11,7 @@ use AmezmoCli\Command\Auth\StatusCommand;
 use AmezmoCli\Command\AuthCommand;
 use AmezmoCli\Command\VersionCommand;
 use AmezmoCli\Command\WhoamiCommand;
+use AmezmoCli\Command\RegionsCommand;
 use AmezmoCli\Config\ConfigLoader;
 use AmezmoCli\Output\ResultRenderer;
 use Symfony\Component\Console\Application as ConsoleApplication;
@@ -29,6 +30,7 @@ final class Application extends ConsoleApplication
             ['version', new VersionCommand($store, $loader, $renderer)],
             ['auth', new AuthCommand($store, $loader, $renderer)],
             ['whoami', new WhoamiCommand($store, $loader, $renderer)],
+            ['regions', new RegionsCommand($store, $loader, $renderer)],
         ];
         foreach ($commands as [$name, $command]) {
             $this->add($command->setName($name));

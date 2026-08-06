@@ -18,4 +18,4 @@ Bearer keys are never logged or printed in full. Unix config files use mode 0600
 
 ## Risks and next steps
 
-The live docs index links additional endpoint pages but currently exposes incomplete path/response details for several resources. Inventory those child pages next, then implement `regions list` as the next read-only command with official fixtures.
+The live docs index links additional endpoint pages but currently exposes incomplete path/response details for several resources. `regions list` is now implemented from its fully documented child page; inventory the remaining child pages next.

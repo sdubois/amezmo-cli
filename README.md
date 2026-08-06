@@ -2,7 +2,7 @@
 
 `amezmo-cli` is an unofficial, open-source community command-line client for the Amezmo REST API. It is not an official Amezmo product.
 
-Status: first vertical slice. Version reporting, file-backed authentication, current-account validation, JSON/YAML/table rendering, and the documented `/me/` API operation are implemented. Resource commands are being added only after their official endpoint pages are inventoried.
+Status: early release. Version reporting, file-backed authentication, current-account validation, JSON/YAML/table rendering, the documented `/me/` API operation, and `regions list` are implemented. Additional resource commands are being added only after their official endpoint pages are inventoried.
 
 Requires PHP 8.2+.
 
@@ -48,6 +48,8 @@ Configuration precedence is command line, environment, stored configuration, the
 amezmo-cli whoami -o table
 amezmo-cli whoami --output=json
 amezmo-cli whoami --output=yaml
+amezmo-cli regions list
+amezmo-cli regions list --output=json
 ```
 
 Diagnostics go to stderr; machine-readable output contains only the API result.
