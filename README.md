@@ -58,6 +58,7 @@ amezmo-cli instance-types list
 amezmo-cli environments list 3503
 amezmo-cli environments get 3503 production
 amezmo-cli deployments get 3503 49015
+amezmo-cli workers get 3503 <worker-id>
 ```
 
 Diagnostics go to stderr; machine-readable output contains only the API result.

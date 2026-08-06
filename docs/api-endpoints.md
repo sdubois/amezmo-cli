@@ -18,6 +18,7 @@ Source: [official Amezmo API documentation](https://www.amezmo.com/docs/api), in
 | Deployments | Cancel | POST | documented from Deployments index | path/body not exposed in captured content | undocumented here | yes | destructive | [index](https://www.amezmo.com/docs/api/deployments) |
 | Regions | List | GET | `/regions` | none | 200 array of `{id, iso_country_code, name}` | yes | read-only | [page](https://www.amezmo.com/docs/api/regions/list-regions) |
 | Regions | Get | GET | `/regions/{region_id}` | `region_id` URI | 200 region object | yes | read-only | [page](https://www.amezmo.com/docs/api/regions/get-region) |
-| Workers | Get/Start/Stop/Restart | GET/POST | documented from Workers index | paths/shape not exposed in captured content | undocumented here | yes | read-only or mutating | [index](https://www.amezmo.com/docs/api/workers) |
+| Workers | Get | GET | `/instances/{instance_id}/workers/{worker_id}` | `instance_id`, `worker_id` URI | 200 worker object: `id`, `name`, `command`, process/retry settings, status, log path | yes | read-only | [page](https://www.amezmo.com/docs/api/workers/get) |
+| Workers | Start/Stop/Restart | POST | documented from Workers index | paths/body not inventoried | undocumented here | yes | mutating | [index](https://www.amezmo.com/docs/api/workers) |
 
 Open questions are intentionally retained rather than filled with guesses. The initial CLI slice only uses the fully documented `/me/` operation.

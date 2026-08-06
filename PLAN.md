@@ -10,7 +10,7 @@ Version, authentication login/status/logout, whoami, read-only region/instance/i
 
 ## Deferred scope
 
-Instance creation, instance termination, environment updates, deployment creation/cancellation, worker control, and archive upload commands.
+Instance creation, instance termination, environment updates, deployment creation/cancellation, worker start/stop/restart, and archive upload commands.
 
 ## Security decisions
 

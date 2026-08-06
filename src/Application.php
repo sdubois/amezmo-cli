@@ -16,6 +16,7 @@ use AmezmoCli\Command\InstancesCommand;
 use AmezmoCli\Command\InstanceTypesCommand;
 use AmezmoCli\Command\EnvironmentsCommand;
 use AmezmoCli\Command\DeploymentsCommand;
+use AmezmoCli\Command\WorkersCommand;
 use AmezmoCli\Config\ConfigLoader;
 use AmezmoCli\Output\ResultRenderer;
 use Symfony\Component\Console\Application as ConsoleApplication;
@@ -39,6 +40,7 @@ final class Application extends ConsoleApplication
             ['instance-types', new InstanceTypesCommand($store, $loader, $renderer)],
             ['environments', new EnvironmentsCommand($store, $loader, $renderer)],
             ['deployments', new DeploymentsCommand($store, $loader, $renderer)],
+            ['workers', new WorkersCommand($store, $loader, $renderer)],
         ];
         foreach ($commands as [$name, $command]) {
             $this->add($command->setName($name));
