@@ -1,0 +1,20 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        php: ['8.2', '8.4']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: {php-version: '${{ matrix.php }}', extensions: mbstring, coverage: none}
+      - run: composer validate --strict
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer test
+      - run: composer analyse
+      - run: composer lint
+      - run: composer build
+      - run: composer verify-phar

@@ -1,0 +1,30 @@
+{
+  "name": "your-vendor/amezmo-cli",
+  "description": "Unofficial community CLI for the Amezmo API",
+  "type": "project",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.2",
+    "symfony/console": "^7.3",
+    "symfony/filesystem": "^7.3",
+    "symfony/http-client": "^7.3",
+    "symfony/yaml": "^7.3"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.1",
+    "friendsofphp/php-cs-fixer": "^3.75",
+    "phpunit/phpunit": "^11.5",
+    "humbug/box": "^4.6"
+  },
+  "autoload": {"psr-4": {"AmezmoCli\\": "src/"}},
+  "autoload-dev": {"psr-4": {"AmezmoCli\\Tests\\": "tests/"}},
+  "bin": ["bin/amezmo-cli"],
+  "scripts": {
+    "test": "phpunit",
+    "analyse": "phpstan analyse",
+    "lint": "php-cs-fixer fix --dry-run --diff",
+    "build": "box compile",
+    "verify-phar": "php build/amezmo-cli.phar --version && php build/amezmo-cli.phar list"
+  },
+  "config": {"sort-packages": true, "allow-plugins": {"php-http/discovery": true}}
+}

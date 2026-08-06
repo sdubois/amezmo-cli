@@ -1,0 +1,20 @@
+name: Release
+on:
+  push:
+    tags: ['v*.*.*']
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions: {contents: write}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: {php-version: '8.2', coverage: none}
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer test && composer analyse && composer lint && composer build && composer verify-phar
+      - run: sha256sum build/amezmo-cli.phar > build/amezmo-cli.phar.sha256
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/amezmo-cli.phar
+            build/amezmo-cli.phar.sha256

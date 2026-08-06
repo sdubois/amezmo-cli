@@ -1,0 +1,6 @@
+{
+  "main": "bin/amezmo-cli",
+  "output": "build/amezmo-cli.phar",
+  "directories": ["src", "vendor"],
+  "chmod": "0755"
+}

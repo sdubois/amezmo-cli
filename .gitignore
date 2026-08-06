@@ -1,0 +1,27 @@
+/vendor/
+/build/
+/.phpunit.cache/
+.php-cs-fixer.cache
+.phpunit.result.cache
+
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+
+# OS, editor, and local tooling files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local AI-tool state and generated instructions
+.codex/
+.claude/
+.cursor/
+.aider*
+
+# Test and coverage output
+/coverage/
+clover.xml
+phpunit.xml.coverage
