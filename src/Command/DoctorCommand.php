@@ -23,7 +23,7 @@ final class DoctorCommand extends AbstractCommand
         $config = $this->config->load($this->options($input));
         $checks = [
             'php' => PHP_VERSION,
-            'php_supported' => version_compare(PHP_VERSION, '8.2.0', '>='),
+            'php_supported' => version_compare(PHP_VERSION, '8.3.0', '>='),
             'config_path' => $path,
             'config_exists' => $configExists,
             'config_readable' => !$configExists || is_readable($path),

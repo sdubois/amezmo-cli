@@ -4,7 +4,7 @@
 
 Status: early release. Version reporting, file-backed authentication, current-account validation, JSON/YAML/table rendering, documented account, region, instance, environment, instance-type, deployment, and worker commands are implemented. Mutating commands require confirmation.
 
-Requires PHP 8.2+.
+Requires PHP 8.3+.
 
 ## Install
 
