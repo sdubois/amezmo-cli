@@ -11,8 +11,15 @@ final class ConfigPathsTest extends TestCase
 {
     public function testPlatformPaths(): void
     {
-        self::assertSame('/home/a/.config/amezmo-cli/config.json', ConfigPaths::file('/home/a', 'Linux'));
-        self::assertSame('/home/a/Library/Application Support/amezmo-cli/config.json', ConfigPaths::file('/home/a', 'Darwin'));
-        self::assertSame('C:\\Users\\a/amezmo-cli/config.json', ConfigPaths::file('C:\\Users\\a', 'Windows', null, 'C:\\Users\\a'));
+        $xdg = getenv('XDG_CONFIG_HOME');
+        putenv('XDG_CONFIG_HOME');
+        try {
+            self::assertSame('/home/a/.config/amezmo-cli/config.json', ConfigPaths::file('/home/a', 'Linux'));
+            self::assertSame('/custom/config/amezmo-cli/config.json', ConfigPaths::file('/home/a', 'Linux', '/custom/config'));
+            self::assertSame('/home/a/Library/Application Support/amezmo-cli/config.json', ConfigPaths::file('/home/a', 'Darwin'));
+            self::assertSame('C:\\Users\\a/amezmo-cli/config.json', ConfigPaths::file('C:\\Users\\a', 'Windows', null, 'C:\\Users\\a'));
+        } finally {
+            putenv($xdg === false ? 'XDG_CONFIG_HOME' : 'XDG_CONFIG_HOME=' . $xdg);
+        }
     }
 }

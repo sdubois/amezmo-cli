@@ -16,6 +16,10 @@ final class ConfigPaths
         if ($os === 'Darwin') {
             return $home . '/Library/Application Support/amezmo-cli/config.json';
         }
-        return rtrim($xdg ?? (string) getenv('XDG_CONFIG_HOME'), '/') . ($xdg ? '' : $home . '/.config') . '/amezmo-cli/config.json';
+        $xdgHome = $xdg ?? (($value = getenv('XDG_CONFIG_HOME')) !== false && $value !== '' ? $value : null);
+        if ($xdgHome !== null) {
+            return rtrim($xdgHome, '/') . '/amezmo-cli/config.json';
+        }
+        return $home . '/.config/amezmo-cli/config.json';
     }
 }
