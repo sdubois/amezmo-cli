@@ -15,6 +15,7 @@ jobs:
       - run: sha256sum build/amezmo-cli.phar > build/amezmo-cli.phar.sha256
       - uses: softprops/action-gh-release@v2
         with:
+          prerelease: ${{ contains(github.ref_name, '-') }}
           files: |
             build/amezmo-cli.phar
             build/amezmo-cli.phar.sha256
