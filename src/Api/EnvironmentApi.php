@@ -19,4 +19,13 @@ final class EnvironmentApi
     {
         return $this->client->request('GET', '/instances/' . rawurlencode($instanceId) . '/environments/' . rawurlencode($name));
     }
+
+    /**
+     * @param array<string, mixed> $fields
+     * @return array<string, mixed>
+     */
+    public function update(string $instanceId, string $name, array $fields): array
+    {
+        return $this->client->formRequest('PATCH', '/instances/' . rawurlencode($instanceId) . '/environments/' . rawurlencode($name), $fields);
+    }
 }

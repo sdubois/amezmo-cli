@@ -7,6 +7,8 @@ namespace AmezmoCli\Tests\Unit;
 use AmezmoCli\Api\AmezmoClient;
 use AmezmoCli\Api\RegionApi;
 use AmezmoCli\Api\WorkerApi;
+use AmezmoCli\Api\InstanceApi;
+use AmezmoCli\Api\EnvironmentApi;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -46,6 +48,47 @@ final class ClientTest extends TestCase
         $worker = (new WorkerApi(new AmezmoClient('https://example.test/v1', 'test-key', 5, false, $http)))->get('3503', '838');
         self::assertSame('queue', $worker['name']);
         self::assertSame('Running', $worker['status']);
+    }
+
+    public function testDocumentedInstanceMutationsUseFormAndDeleteEndpoints(): void
+    {
+        $calls = [];
+        $http = new MockHttpClient(static function (string $method, string $url, array $options) use (&$calls): MockResponse {
+            $calls[] = [$method, $url, $options];
+            return new MockResponse($method === 'POST' ? '{"id":42,"state":"Launching"}' : '{"id":42,"state":"Deleting"}', ['http_code' => $method === 'POST' ? 201 : 200]);
+        });
+        $api = new InstanceApi(new AmezmoClient('https://example.test/v1', 'test-key', 5, false, $http));
+        self::assertSame(42, $api->create(['runtime' => 'php', 'instance_type' => 'business', 'region' => 'lb2-us'])['id']);
+        self::assertSame('Deleting', $api->terminate('42')['state']);
+        self::assertSame('POST', $calls[0][0]);
+        self::assertSame('https://example.test/v1/instances', $calls[0][1]);
+        self::assertSame('DELETE', $calls[1][0]);
+        self::assertSame('https://example.test/v1/instances/42', $calls[1][1]);
+        self::assertSame('runtime=php&instance_type=business&region=lb2-us', $calls[0][2]['body']);
+    }
+
+    public function testEnvironmentUpdateUsesDocumentedPatchEndpoint(): void
+    {
+        $http = new MockHttpClient(static function (string $method, string $url, array $options): MockResponse {
+            self::assertSame('PATCH', $method);
+            self::assertSame('https://example.test/v1/instances/42/environments/staging', $url);
+            self::assertSame('ssh_enabled=0', $options['body']);
+            return new MockResponse('{"id":5501,"ssh_enabled":false}', ['http_code' => 200]);
+        });
+        $environment = new EnvironmentApi(new AmezmoClient('https://example.test/v1', 'test-key', 5, false, $http));
+        self::assertFalse($environment->update('42', 'staging', ['ssh_enabled' => false])['ssh_enabled']);
+    }
+
+    public function testWorkerLifecycleActionsUseDocumentedEndpoints(): void
+    {
+        $http = new MockHttpClient(static function (string $method, string $url): MockResponse {
+            self::assertSame('POST', $method);
+            return new MockResponse('{"status":"ok"}', ['http_code' => 200]);
+        });
+        $api = new WorkerApi(new AmezmoClient('https://example.test/v1', 'test-key', 5, false, $http));
+        self::assertSame('ok', $api->start('42', '838')['status']);
+        self::assertSame('ok', $api->stop('42', '838')['status']);
+        self::assertSame('ok', $api->restart('42', '838')['status']);
     }
 
     public function testDeploymentCancelUsesDocumentedEndpoint(): void

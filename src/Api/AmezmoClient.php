@@ -62,6 +62,45 @@ final class AmezmoClient
     }
 
     /**
+     * @param array<string, mixed> $fields
+     * @return array<string, mixed>
+     */
+    public function formRequest(string $method, string $path, array $fields = []): array
+    {
+        $url = rtrim($this->baseUrl, '/') . '/' . ltrim($path, '/');
+        $headers = ['Accept' => 'application/json', 'User-Agent' => 'amezmo-cli/' . \AmezmoCli\Version::VALUE];
+        if ($this->apiKey !== null) {
+            $headers['Authorization'] = 'Bearer ' . $this->apiKey;
+        }
+        $options = ['timeout' => $this->timeout, 'headers' => $headers];
+        if ($fields !== []) {
+            $options['body'] = $fields;
+        }
+        $response = ($this->http ?? HttpClient::create())->request($method, $url, $options);
+        try {
+            $status = $response->getStatusCode();
+            $body = $response->getContent(false);
+        } catch (\Throwable $e) {
+            throw new ApiException('Amezmo API request failed: ' . $e->getMessage(), 0);
+        }
+        $data = $body === '' ? [] : json_decode($body, true);
+        if ($status >= 400) {
+            $message = is_array($data) && isset($data['message']) && is_string($data['message']) ? $data['message'] : 'Amezmo API returned HTTP ' . $status . '.';
+            if ($status === 404) {
+                $message = 'Resource not found (HTTP 404). Check the resource type and identifier.';
+            }
+            if ($status === 401) {
+                throw new AuthenticationException($message, $status, is_array($data) ? $data : []);
+            }
+            throw new ApiException($message, $status, is_array($data) ? $data : []);
+        }
+        if ($body !== '' && !is_array($data)) {
+            throw new ApiException('Amezmo API returned invalid JSON.', $status);
+        }
+        return is_array($data) ? $data : [];
+    }
+
+    /**
      * @param array<string, string> $fields
      * @return array<string, mixed>
      */

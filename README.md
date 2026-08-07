@@ -2,7 +2,7 @@
 
 `amezmo-cli` is an unofficial, open-source community command-line client for the Amezmo REST API. It is not an official Amezmo product.
 
-Status: early release. Version reporting, file-backed authentication, current-account validation, JSON/YAML/table rendering, and read-only account, region, instance, environment, instance-type, and deployment commands are implemented.
+Status: early release. Version reporting, file-backed authentication, current-account validation, JSON/YAML/table rendering, documented account, region, instance, environment, instance-type, deployment, and worker commands are implemented. Mutating commands require confirmation.
 
 Requires PHP 8.2+.
 
@@ -54,6 +54,8 @@ amezmo-cli regions get lb3-US
 amezmo-cli instances list
 amezmo-cli instances list --instance-type=business
 amezmo-cli instances get 3503
+amezmo-cli instances create --runtime=php --instance-type=business --region=lb2-us
+amezmo-cli instances terminate 3503 --yes
 amezmo-cli instance-types list
 amezmo-cli environments list 3503
 amezmo-cli environments get 3503 production
@@ -61,6 +63,10 @@ amezmo-cli deployments get 3503 49015
 amezmo-cli deployments create 3503 --environment=staging --archive=app.zip
 amezmo-cli deployments cancel 3503 49015
 amezmo-cli workers get 3503 <worker-id>
+amezmo-cli workers start 3503 <worker-id>
+amezmo-cli workers stop 3503 <worker-id> --yes
+amezmo-cli workers restart 3503 <worker-id>
+amezmo-cli environments update 3503 staging --ssh-enabled=false
 amezmo-cli config path
 amezmo-cli doctor
 ```

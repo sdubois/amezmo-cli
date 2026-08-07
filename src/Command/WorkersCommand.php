@@ -20,19 +20,28 @@ final class WorkersCommand extends AbstractCommand
     protected function configure(): void
     {
         parent::configure();
-        $this->addArgument('action', InputArgument::REQUIRED, 'get')
+        $this->addArgument('action', InputArgument::REQUIRED, 'get, start, stop, or restart')
             ->addArgument('instance-id', InputArgument::REQUIRED)
             ->addArgument('worker-id', InputArgument::REQUIRED);
+        $this->addDestructiveOption();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if ($input->getArgument('action') !== 'get') {
-            return $this->fail($output, 'Usage: workers get <instance-id> <worker-id>', 2);
+        $action = (string) $input->getArgument('action');
+        if (!in_array($action, ['get', 'start', 'stop', 'restart'], true)) {
+            return $this->fail($output, 'Usage: workers get|start|stop|restart <instance-id> <worker-id>', 2);
         }
 
         try {
-            $worker = (new WorkerApi($this->client($input)))->get(
+            if ($action !== 'get') {
+                $this->confirmDestructive($input, $output, ucfirst($action) . ' worker ' . $input->getArgument('worker-id') . '?');
+            }
+            $api = new WorkerApi($this->client($input));
+            $worker = $action === 'get' ? $api->get(
+                (string) $input->getArgument('instance-id'),
+                (string) $input->getArgument('worker-id'),
+            ) : $api->{$action}(
                 (string) $input->getArgument('instance-id'),
                 (string) $input->getArgument('worker-id'),
             );

@@ -9,6 +9,7 @@ use AmezmoCli\Auth\CredentialStoreInterface;
 use AmezmoCli\Config\ConfigLoader;
 use AmezmoCli\Exception\ApiException;
 use AmezmoCli\Exception\AuthenticationException;
+use AmezmoCli\Exception\ConfirmationRequiredException;
 use AmezmoCli\Output\ResultRenderer;
 use AmezmoCli\Support\ExitCode;
 use AmezmoCli\Support\Confirmation;
@@ -48,6 +49,9 @@ abstract class AbstractCommand extends Command
 
     protected function exceptionCode(\Throwable $exception): int
     {
+        if ($exception instanceof ConfirmationRequiredException) {
+            return ExitCode::ERROR;
+        }
         if ($exception instanceof AuthenticationException) {
             return ExitCode::AUTH;
         }

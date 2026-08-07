@@ -20,4 +20,19 @@ final class InstanceApi
     {
         return $this->client->request('GET', '/instances/' . rawurlencode($id));
     }
+
+    /**
+     * @param array<string, mixed> $fields
+     * @return array<string, mixed>
+     */
+    public function create(array $fields): array
+    {
+        return $this->client->formRequest('POST', '/instances', $fields);
+    }
+
+    /** @return array<string, mixed> */
+    public function terminate(string $id): array
+    {
+        return $this->client->request('DELETE', '/instances/' . rawurlencode($id));
+    }
 }
