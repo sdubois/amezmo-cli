@@ -11,6 +11,7 @@ use AmezmoCli\Exception\ApiException;
 use AmezmoCli\Exception\AuthenticationException;
 use AmezmoCli\Output\ResultRenderer;
 use AmezmoCli\Support\ExitCode;
+use AmezmoCli\Support\Confirmation;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -59,6 +60,16 @@ abstract class AbstractCommand extends Command
             };
         }
         return ExitCode::API;
+    }
+
+    protected function addDestructiveOption(): void
+    {
+        $this->addOption('yes', null, \Symfony\Component\Console\Input\InputOption::VALUE_NONE, 'Skip the confirmation prompt.');
+    }
+
+    protected function confirmDestructive(InputInterface $input, OutputInterface $output, string $message): void
+    {
+        (new Confirmation())->require($input, $output, $message, (bool) $input->getOption('yes'));
     }
     protected function fail(OutputInterface $output, string $message, int $code = 1): int
     {
