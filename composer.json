@@ -8,6 +8,7 @@
     "symfony/console": "^7.3",
     "symfony/filesystem": "^7.3",
     "symfony/http-client": "^7.3",
+    "symfony/mime": "^7.3",
     "symfony/yaml": "^7.3"
   },
   "require-dev": {

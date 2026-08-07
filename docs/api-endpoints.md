@@ -15,7 +15,7 @@ Source: [official Amezmo API documentation](https://www.amezmo.com/docs/api), in
 | Environments | Update | PUT/PATCH | documented from Environments index | fields not inventoried | undocumented here | yes | mutating | [index](https://www.amezmo.com/docs/api/environments) |
 | Deployments | Get | GET | `/instances/{instance_id}/deployments/{deployment_id}` | URI IDs | 200 `{id,status}` | yes | read-only | [page](https://www.amezmo.com/docs/api/deployments/get) |
 | Deployments | Create | POST | `/instances/{instance_id}/deployments` | multipart: `environment`, `archive`, optional repo metadata | 201 `{id,status}` | yes | mutating | [page](https://www.amezmo.com/docs/api/deployments/post); archive max 512MB |
-| Deployments | Cancel | POST | documented from Deployments index | path/body not exposed in captured content | undocumented here | yes | destructive | [index](https://www.amezmo.com/docs/api/deployments) |
+| Deployments | Cancel | POST | `/instances/{instance_id}/deployments/{deployment_id}/cancel` | `instance_id`, `deployment_id` URI | 200 `{id,status}` | yes | destructive | [page](https://www.amezmo.com/docs/api/deployments/cancel-deployment) |
 | Regions | List | GET | `/regions` | none | 200 array of `{id, iso_country_code, name}` | yes | read-only | [page](https://www.amezmo.com/docs/api/regions/list-regions) |
 | Regions | Get | GET | `/regions/{region_id}` | `region_id` URI | 200 region object | yes | read-only | [page](https://www.amezmo.com/docs/api/regions/get-region) |
 | Workers | Get | GET | `/instances/{instance_id}/workers/{worker_id}` | `instance_id`, `worker_id` URI | 200 worker object: `id`, `name`, `command`, process/retry settings, status, log path | yes | read-only | [page](https://www.amezmo.com/docs/api/workers/get) |

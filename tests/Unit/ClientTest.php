@@ -47,4 +47,35 @@ final class ClientTest extends TestCase
         self::assertSame('queue', $worker['name']);
         self::assertSame('Running', $worker['status']);
     }
+
+    public function testDeploymentCancelUsesDocumentedEndpoint(): void
+    {
+        $http = new MockHttpClient(static function (string $method, string $url): MockResponse {
+            self::assertSame('POST', $method);
+            self::assertSame('https://example.test/v1/instances/3503/deployments/838/cancel', $url);
+            return new MockResponse('{"id":838,"status":"cancelling"}', ['http_code' => 200]);
+        });
+        $deployment = new \AmezmoCli\Api\DeploymentApi(new AmezmoClient('https://example.test/v1', 'test-key', 5, false, $http));
+        self::assertSame('cancelling', $deployment->cancel('3503', '838')['status']);
+    }
+
+    public function testMultipartDeploymentRequestIncludesArchiveAndFields(): void
+    {
+        $archive = tempnam(sys_get_temp_dir(), 'amezmo-cli-');
+        self::assertNotFalse($archive);
+        file_put_contents($archive, 'archive-content');
+        try {
+            $http = new MockHttpClient(static function (string $method, string $url, array $options): MockResponse {
+                self::assertSame('POST', $method);
+                self::assertSame('https://example.test/v1/instances/3503/deployments', $url);
+                self::assertStringContainsString('multipart/form-data', implode('; ', $options['headers']));
+                self::assertIsCallable($options['body']);
+                return new MockResponse('{"id":839,"status":"pending"}', ['http_code' => 201]);
+            });
+            $deployment = new \AmezmoCli\Api\DeploymentApi(new AmezmoClient('https://example.test/v1', 'test-key', 5, false, $http));
+            self::assertSame('pending', $deployment->create('3503', 'staging', $archive, ['branch' => 'main'])['status']);
+        } finally {
+            unlink($archive);
+        }
+    }
 }

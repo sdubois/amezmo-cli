@@ -58,6 +58,8 @@ amezmo-cli instance-types list
 amezmo-cli environments list 3503
 amezmo-cli environments get 3503 production
 amezmo-cli deployments get 3503 49015
+amezmo-cli deployments create 3503 --environment=staging --archive=app.zip
+amezmo-cli deployments cancel 3503 49015
 amezmo-cli workers get 3503 <worker-id>
 amezmo-cli config path
 amezmo-cli doctor

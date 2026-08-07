@@ -10,7 +10,7 @@ Version, authentication login/status/logout, whoami, read-only region/instance/i
 
 ## Deferred scope
 
-Instance creation, instance termination, environment updates, deployment creation/cancellation, worker start/stop/restart, and archive upload commands.
+Instance creation, instance termination, environment updates, worker start/stop/restart, and archive upload commands. Deployment creation and cancellation are now implemented with confirmation safeguards; they have not been run against live infrastructure.
 
 Shared confirmation support is now available for future mutating commands. It requires interactive confirmation by default, refuses non-interactive execution unless `--yes` is supplied, and is not attached to read-only commands.
 
