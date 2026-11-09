@@ -6,5 +6,5 @@ namespace AmezmoCli;
 
 final class Version
 {
-    public const VALUE = '0.1.0-beta.1';
+    public const VALUE = '0.1.0-beta.2';
 }
