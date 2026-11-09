@@ -3,6 +3,7 @@ on: [push, pull_request]
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         php: ['8.3', '8.4']
@@ -16,5 +17,8 @@ jobs:
       - run: composer test
       - run: composer analyse
       - run: composer lint
+      # Box cannot clean up its temp directory on Windows runners; release PHARs are built on Ubuntu.
       - run: composer build
+        if: runner.os != 'Windows'
       - run: composer verify-phar
+        if: runner.os != 'Windows'
