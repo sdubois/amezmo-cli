@@ -17,7 +17,7 @@ final class ConfigPathsTest extends TestCase
             self::assertSame('/home/a/.config/amezmo-cli/config.json', ConfigPaths::file('/home/a', 'Linux'));
             self::assertSame('/custom/config/amezmo-cli/config.json', ConfigPaths::file('/home/a', 'Linux', '/custom/config'));
             self::assertSame('/home/a/Library/Application Support/amezmo-cli/config.json', ConfigPaths::file('/home/a', 'Darwin'));
-            self::assertSame('C:\\Users\\a/amezmo-cli/config.json', ConfigPaths::file('C:\\Users\\a', 'Windows', null, 'C:\\Users\\a'));
+            self::assertSame('C:\\Users\\a\\amezmo-cli\\config.json', ConfigPaths::file('C:\\Users\\a', 'Windows', null, 'C:\\Users\\a'));
         } finally {
             putenv($xdg === false ? 'XDG_CONFIG_HOME' : 'XDG_CONFIG_HOME=' . $xdg);
         }

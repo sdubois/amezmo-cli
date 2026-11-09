@@ -11,7 +11,7 @@ final class ConfigPaths
         $home ??= (string) (getenv('HOME') ?: getenv('USERPROFILE') ?: '.');
         $os ??= PHP_OS_FAMILY;
         if ($os === 'Windows') {
-            return rtrim($appData ?? (string) getenv('APPDATA'), '\\/') . DIRECTORY_SEPARATOR . 'amezmo-cli' . DIRECTORY_SEPARATOR . 'config.json';
+            return rtrim($appData ?? (string) getenv('APPDATA'), '\\/') . '\\amezmo-cli\\config.json';
         }
         if ($os === 'Darwin') {
             return $home . '/Library/Application Support/amezmo-cli/config.json';
