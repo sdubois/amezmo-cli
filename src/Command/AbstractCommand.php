@@ -56,6 +56,9 @@ abstract class AbstractCommand extends Command
             return ExitCode::AUTH;
         }
         if ($exception instanceof ApiException) {
+            if ($exception->errorType() === 'authentication_error') {
+                return ExitCode::AUTH;
+            }
             return match ($exception->statusCode) {
                 401, 403 => ExitCode::AUTH,
                 404 => ExitCode::NOT_FOUND,

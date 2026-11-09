@@ -2,7 +2,7 @@
 
 `amezmo-cli` is an unofficial, open-source community command-line client for the Amezmo REST API. It is not an official Amezmo product.
 
-Status: early release. Version reporting, file-backed authentication, current-account validation, JSON/YAML/table rendering, documented account, region, instance, environment, instance-type, deployment, and worker commands are implemented. Mutating commands require confirmation.
+Status: early release. Version reporting, file-backed authentication, current-account validation, JSON/YAML/table rendering, documented account, region, instance, environment, instance-type, deployment, worker, and cron commands are implemented. Mutating commands require confirmation.
 
 Requires PHP 8.3+.
 
@@ -66,6 +66,10 @@ amezmo-cli workers get 3503 <worker-id>
 amezmo-cli workers start 3503 <worker-id>
 amezmo-cli workers stop 3503 <worker-id> --yes
 amezmo-cli workers restart 3503 <worker-id>
+amezmo-cli cron list 3503
+amezmo-cli cron get 3503 412
+amezmo-cli cron create 3503 --name=Laravel-task-scheduler --environment=production --expression=@minutely --command-file=scheduler.sh
+amezmo-cli cron update 3503 412 --expression=@every_5_minutes --yes
 amezmo-cli environments update 3503 staging --ssh-enabled=false
 amezmo-cli config path
 amezmo-cli doctor

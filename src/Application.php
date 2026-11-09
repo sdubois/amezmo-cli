@@ -17,6 +17,7 @@ use AmezmoCli\Command\InstanceTypesCommand;
 use AmezmoCli\Command\EnvironmentsCommand;
 use AmezmoCli\Command\DeploymentsCommand;
 use AmezmoCli\Command\WorkersCommand;
+use AmezmoCli\Command\CronCommand;
 use AmezmoCli\Command\ConfigCommand;
 use AmezmoCli\Command\DoctorCommand;
 use AmezmoCli\Config\ConfigLoader;
@@ -43,6 +44,7 @@ final class Application extends ConsoleApplication
             ['environments', new EnvironmentsCommand($store, $loader, $renderer)],
             ['deployments', new DeploymentsCommand($store, $loader, $renderer)],
             ['workers', new WorkersCommand($store, $loader, $renderer)],
+            ['cron', new CronCommand($store, $loader, $renderer)],
             ['config', new ConfigCommand($store, $loader, $renderer)],
             ['doctor', new DoctorCommand($store, $loader, $renderer)],
         ];

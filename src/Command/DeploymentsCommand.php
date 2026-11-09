@@ -12,6 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class DeploymentsCommand extends AbstractCommand
 {
+    private const MAX_ARCHIVE_BYTES = 512 * 1024 * 1024;
+
     public function __construct(\AmezmoCli\Auth\CredentialStoreInterface $credentials, \AmezmoCli\Config\ConfigLoader $config, \AmezmoCli\Output\ResultRenderer $renderer)
     {
         parent::__construct($credentials, $config, $renderer);
@@ -49,6 +51,12 @@ final class DeploymentsCommand extends AbstractCommand
                 $archive = $input->getOption('archive');
                 if (!is_file($archive) || !is_readable($archive)) {
                     return $this->fail($output, 'Archive file does not exist or is not readable.', 2);
+                }
+                if (filesize($archive) > self::MAX_ARCHIVE_BYTES) {
+                    return $this->fail($output, 'Archive file exceeds the 512MB API limit.', 2);
+                }
+                if (is_string($input->getOption('repo-owner')) !== is_string($input->getOption('repo-name'))) {
+                    return $this->fail($output, '--repo-owner and --repo-name must be given together.', 2);
                 }
                 $this->confirmDestructive($input, $output, 'Create a ' . $input->getOption('environment') . ' deployment on instance ' . $instanceId . '?');
                 $fields = [];

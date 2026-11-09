@@ -34,31 +34,7 @@ final class AmezmoClient
         if ($json !== null) {
             $options['json'] = $json;
         }
-        $response = ($this->http ?? HttpClient::create())->request($method, $url, $options);
-        try {
-            $status = $response->getStatusCode();
-            $body = $response->getContent(false);
-        } catch (\Throwable $e) {
-            throw new ApiException('Amezmo API request failed: ' . $e->getMessage(), 0);
-        }
-        if ($this->debug) {
-            fwrite(STDERR, (new SecretRedactor($this->apiKey))->redact(sprintf('%s %s -> %d', $method, $url, $status)) . PHP_EOL);
-        }
-        $data = $body === '' ? [] : json_decode($body, true);
-        if ($status >= 400) {
-            $message = is_array($data) && isset($data['message']) && is_string($data['message']) ? $data['message'] : 'Amezmo API returned HTTP ' . $status . '.';
-            if ($status === 404) {
-                $message = 'Resource not found (HTTP 404). Check the resource type and identifier.';
-            }
-            if ($status === 401) {
-                throw new AuthenticationException($message, $status, is_array($data) ? $data : []);
-            }
-            throw new ApiException($message, $status, is_array($data) ? $data : []);
-        }
-        if ($body !== '' && !is_array($data)) {
-            throw new ApiException('Amezmo API returned invalid JSON.', $status);
-        }
-        return is_array($data) ? $data : [];
+        return $this->send($method, $url, $options);
     }
 
     /**
@@ -76,28 +52,7 @@ final class AmezmoClient
         if ($fields !== []) {
             $options['body'] = $fields;
         }
-        $response = ($this->http ?? HttpClient::create())->request($method, $url, $options);
-        try {
-            $status = $response->getStatusCode();
-            $body = $response->getContent(false);
-        } catch (\Throwable $e) {
-            throw new ApiException('Amezmo API request failed: ' . $e->getMessage(), 0);
-        }
-        $data = $body === '' ? [] : json_decode($body, true);
-        if ($status >= 400) {
-            $message = is_array($data) && isset($data['message']) && is_string($data['message']) ? $data['message'] : 'Amezmo API returned HTTP ' . $status . '.';
-            if ($status === 404) {
-                $message = 'Resource not found (HTTP 404). Check the resource type and identifier.';
-            }
-            if ($status === 401) {
-                throw new AuthenticationException($message, $status, is_array($data) ? $data : []);
-            }
-            throw new ApiException($message, $status, is_array($data) ? $data : []);
-        }
-        if ($body !== '' && !is_array($data)) {
-            throw new ApiException('Amezmo API returned invalid JSON.', $status);
-        }
-        return is_array($data) ? $data : [];
+        return $this->send($method, $url, $options);
     }
 
     /**
@@ -118,20 +73,65 @@ final class AmezmoClient
         if ($this->apiKey !== null) {
             $options['headers']['Authorization'] = 'Bearer ' . $this->apiKey;
         }
-        $response = ($this->http ?? HttpClient::create())->request('POST', $url, $options);
+        return $this->send('POST', $url, $options);
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
+     */
+    private function send(string $method, string $url, array $options): array
+    {
+        $response = ($this->http ?? HttpClient::create())->request($method, $url, $options);
         try {
             $status = $response->getStatusCode();
             $body = $response->getContent(false);
-        } catch (\Throwable $exception) {
-            throw new ApiException('Amezmo API request failed: ' . $exception->getMessage(), 0);
+        } catch (\Throwable $e) {
+            throw new ApiException('Amezmo API request failed: ' . $e->getMessage(), 0);
+        }
+        if ($this->debug) {
+            fwrite(STDERR, (new SecretRedactor($this->apiKey))->redact(sprintf('%s %s -> %d', $method, $url, $status)) . PHP_EOL);
         }
         $data = $body === '' ? [] : json_decode($body, true);
         if ($status >= 400) {
-            throw new ApiException('Amezmo API returned HTTP ' . $status . '.', $status, is_array($data) ? $data : []);
+            $error = is_array($data) ? $data : [];
+            $message = self::errorMessage($status, $error);
+            if ($status === 401) {
+                throw new AuthenticationException($message, $status, $error);
+            }
+            throw new ApiException($message, $status, $error);
         }
         if ($body !== '' && !is_array($data)) {
             throw new ApiException('Amezmo API returned invalid JSON.', $status);
         }
         return is_array($data) ? $data : [];
+    }
+
+    /**
+     * Builds a message from the documented error body: message, per-parameter errors, then code and request_id.
+     *
+     * @param array<string, mixed> $error
+     */
+    private static function errorMessage(int $status, array $error): string
+    {
+        $message = isset($error['message']) && is_string($error['message']) && $error['message'] !== ''
+            ? $error['message']
+            : ($status === 404 ? 'Resource not found (HTTP 404). Check the resource type and identifier.' : 'Amezmo API returned HTTP ' . $status . '.');
+        if (isset($error['errors']) && is_array($error['errors'])) {
+            foreach ($error['errors'] as $field => $messages) {
+                foreach ((array) $messages as $fieldMessage) {
+                    if (is_scalar($fieldMessage)) {
+                        $message .= PHP_EOL . '  ' . $field . ': ' . $fieldMessage;
+                    }
+                }
+            }
+        }
+        $details = [];
+        foreach (['code', 'request_id'] as $key) {
+            if (isset($error[$key]) && is_string($error[$key]) && $error[$key] !== '') {
+                $details[] = $key . ': ' . $error[$key];
+            }
+        }
+        return $details === [] ? $message : $message . ' (' . implode(', ', $details) . ')';
     }
 }
